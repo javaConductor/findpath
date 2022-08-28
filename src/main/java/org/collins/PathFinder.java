@@ -3,8 +3,6 @@ package org.collins;
 import org.collins.model.Point;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class PathFinder {
 
@@ -23,10 +21,6 @@ public class PathFinder {
     if (start.equals(end)) {
       path.add(end);
       return path;
-    }
-
-    if (start.getY() >= plane.size() || start.getX() >= plane.get(0).length()) {
-      return null;
     }
 
     // is this a dead end
