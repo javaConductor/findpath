@@ -73,7 +73,7 @@ public class FindPathApplication {
     List<Point> result = pathFinder.findPath(plane);
     if (result != null) {
       List<String> newPlane = printResultsPlane(plane, result);
-      newPlane.stream()
+      newPlane
         .forEach(row -> System.out.printf("｜%s｜\n", row));
     }
   }
@@ -85,9 +85,9 @@ public class FindPathApplication {
       plane.set(point.getY(), sb.toString());
     }
     return plane.stream()
-      .map(s -> s.replace(' ', '⬜'))
-      .map(s -> s.replace('_', '⬜'))
-      .map(s -> s.replace("#", "\uD83D\uDD34"))
+      .map(s -> s.replace(" ", "\uD83D\uDD34"))
+      .map(s -> s.replace("_", "\uD83D\uDD34"))
+      .map(s -> s.replace("#", "\uD83D\uDFE5"))
       .collect(Collectors.toList());
   }
 }
