@@ -4,11 +4,17 @@ import org.collins.model.Point;
 
 import java.util.List;
 
+
 public class PathFinder {
 
   public List<Point> findPath(List<String> plane) {
     if (plane.isEmpty())
       return null;
+
+    if (!isPlaneRectangular(plane)){
+      System.out.println("bad plane: all rows not same length");
+      return null;
+    }
 
     Point start = new Point(0, 0);
     Point end = new Point(plane.get(0).length() - 1, plane.size() - 1);
@@ -51,4 +57,11 @@ public class PathFinder {
     }
     return null;
   }
+
+  boolean isPlaneRectangular(List<String> plane) {
+  int firstLen = plane.get(0).length();
+  return plane.stream()
+    .allMatch(s -> s.length() == firstLen);
+  }
+
 }
