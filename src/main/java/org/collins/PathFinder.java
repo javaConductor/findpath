@@ -7,22 +7,22 @@ import java.util.List;
 
 public class PathFinder {
 
-  public List<Point> findPath(List<String> plane) {
-    if (plane.isEmpty())
+  public List<Point> findPath(List<String> grid) {
+    if (grid.isEmpty())
       return null;
 
-    if (!isPlaneRectangular(plane)){
-      System.out.println("bad plane: all rows not same length");
+    if (!isGridRectangular(grid)){
+      System.out.println("bad grid: all rows not same length");
       return null;
     }
 
     Point start = new Point(0, 0);
-    Point end = new Point(plane.get(0).length() - 1, plane.size() - 1);
+    Point end = new Point(grid.get(0).length() - 1, grid.size() - 1);
 
-    return _findPath(plane, start, end, List.of());
+    return _findPath(grid, start, end, List.of());
   }
 
-  private List<Point> _findPath(List<String> plane, Point start, Point end, List<Point> path) {
+  private List<Point> _findPath(List<String> grid, Point start, Point end, List<Point> path) {
     // base case
     if (start.equals(end)) {
       path.add(end);
@@ -30,7 +30,7 @@ public class PathFinder {
     }
 
     // is this a dead end
-    if (plane.get(start.getY()).charAt(start.getX()) == '#') {
+    if (grid.get(start.getY()).charAt(start.getX()) == '#') {
       return null;
     }
 
@@ -42,25 +42,34 @@ public class PathFinder {
     Point right = new Point(start.getX() + 1, start.getY());
     Point down = new Point(start.getX(), start.getY() + 1);
 
+    List<Point> downResult = null;
     // can we go down
-    if (down.getY() < plane.size()) {
-      List<Point> downResult = _findPath(plane, down, end, newPath);
-      if (downResult != null) {
-        return downResult;
-      }
+    if (down.getY() < grid.size()) {
+      downResult = _findPath(grid, down, end, newPath);
+    }
+    List<Point> rightResult = null;
+    // can we go right
+    if (right.getX() < grid.get(0).length()) {
+      rightResult = _findPath(grid, right, end, newPath);
     }
 
-    // can we go right
-    if (right.getX() < plane.get(0).length()) {
-      List<Point> rightResult = _findPath(plane, right, end, newPath);
+    if (rightResult == null){
+      return downResult;
+    }
+    if(downResult == null){
       return rightResult;
     }
-    return null;
+
+    if (downResult.size() < rightResult.size()){
+      return downResult;
+    }
+
+    return rightResult;
   }
 
-  boolean isPlaneRectangular(List<String> plane) {
-  int firstLen = plane.get(0).length();
-  return plane.stream()
+  boolean isGridRectangular(List<String> grid) {
+  int firstLen = grid.get(0).length();
+  return grid.stream()
     .allMatch(s -> s.length() == firstLen);
   }
 
