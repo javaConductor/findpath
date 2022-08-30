@@ -2,6 +2,10 @@ package org.collins;
 
 import org.collins.model.Point;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,80 +15,44 @@ public class FindPathApplication {
   static PathFinder pathFinder = new PathFinder();
 
   public static void main(String[] args) {
+    // get filename from the args
+    if (args.length < 1)
+      return;
+    String filename = args[0];
+    List<String> grid = null;
 
-    List<String> plane1 = new ArrayList<>();
-    plane1.add("          ");
-    plane1.add("          ");
-    plane1.add("          ");
-    plane1.add(" #########");
-    plane1.add("          ");
+    try {
+      // read grid
+      grid = Files.readAllLines(new File(filename).toPath(), Charset.defaultCharset());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
-    List<String> plane2 = new ArrayList<>();
-    plane2.add(" #  ");
-    plane2.add(" #  ");
-    plane2.add(" #  ");
-    plane2.add("    ");
-
-    List<String> plane3 = new ArrayList<>();
-    plane3.add(" #  ");
-    plane3.add(" # #");
-    plane3.add("   #");
-    plane3.add("    ");
-    plane3.add("# ##");
-    plane3.add("    ");
-
-    List<String> plane4 = new ArrayList<>();
-    plane4.add("  # ");
-    plane4.add("#  #");
-    plane4.add("## #");
-    plane4.add("    ");
-    plane4.add("## #");
-    plane4.add("#   ");
-
-    List<String> plane5 = new ArrayList<>();
-    plane5.add(" #   ");
-    plane5.add("  #  ");
-    plane5.add("   # ");
-    plane5.add("     ");
-    plane5.add("#    ");
-
-    List<String> plane6 = new ArrayList<>();
-    plane6.add("____#");
-    plane6.add("###_#");
-    plane6.add("____#");
-    plane6.add("____#");
-    plane6.add("_____");
-
-  testPlane(plane1);
-    System.out.println("----------------------------------------");
-  testPlane(plane2);
-    System.out.println("----------------------------------------");
-  testPlane(plane3);
-    System.out.println("----------------------------------------");
-  testPlane(plane4);
-    System.out.println("----------------------------------------");
-    testPlane(plane5);
-    System.out.println("----------------------------------------");
-    testPlane(plane6);
-    System.out.println("----------------------------------------");
+    if (grid.isEmpty()){
+      System.out.printf("grid is empty: %s%n", filename);
+      return;
+    }
+    testGrid(grid);
+    System.out.println("_".repeat(grid.get(0).length()*2));
   }
 
-  static void testPlane(List<String> plane) {
-    List<Point> result = pathFinder.findPath(plane);
+  static void testGrid(List<String> grid) {
+    List<Point> result = pathFinder.findPath(grid);
     if (result != null) {
-      List<String> newPlane = printResultsPlane(plane, result);
-      newPlane
+      List<String> newGrid = printResultsGrid(grid, result);
+      newGrid
         .forEach(row -> System.out.printf("｜%s｜\n", row));
     }
   }
 
-  static List<String> printResultsPlane(List<String> plane, List<Point> results) {
+  static List<String> printResultsGrid(List<String> grid, List<Point> results) {
+    System.out.printf("%d steps.\n", results.size());
     for (Point point : results) {
-      StringBuilder sb = new StringBuilder(plane.get(point.getY()));
+      StringBuilder sb = new StringBuilder(grid.get(point.getY()));
       sb.setCharAt(point.getX(), '⭕');
-      plane.set(point.getY(), sb.toString());
+      grid.set(point.getY(), sb.toString());
     }
-    return plane.stream()
+    return grid.stream()
       .map(s -> s.replace(" ", "\uD83D\uDD34"))
       .map(s -> s.replace("_", "\uD83D\uDD34"))
       .map(s -> s.replace("#", "\uD83D\uDFE5"))
