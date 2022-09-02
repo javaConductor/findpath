@@ -13,6 +13,11 @@ public class Utils {
       .collect(Collectors.toList());
   }
 
+  public static <T> List<T> concat(List<T> list1, List<T> list2){
+    return Stream.concat(list1.stream(), list2.stream())
+      .collect(Collectors.toList());
+  }
+
 //
 //  public static <T> List<T> insert(List<T> list, int index, T newElement){
 //
